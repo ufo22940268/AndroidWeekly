@@ -39,6 +39,7 @@ class AndroidWeekly extends Component {
       return {
         title: item.getElementsByTagName('title')[0].textContent,
         description: item.getElementsByTagName('description')[0].textContent,
+        author: item.getElementsByTagName('dc:creator')[0].textContent,
       };
     }
 
@@ -54,7 +55,15 @@ class AndroidWeekly extends Component {
     return (
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={rowData=> <View style={styles.item}><Text>{rowData.title}</Text></View>}
+        renderRow={rowData=>
+         <View style={styles.item}>
+          <Text>{rowData.title}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.author}>{rowData.author}</Text>
+            <Text style={styles.author}>"wefijwoie"</Text>
+          </View>
+        </View>
+        }
       >
       </ListView>
     );
@@ -65,9 +74,14 @@ const styles = StyleSheet.create({
   item: {
     flex: 1,
     backgroundColor: '#F5FCFF',
-    height: 60,
-    paddingLeft: 16,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderColor: 'grey',
+    borderStyle: 'dashed'
   },
+
+  title: {color: 'black'},
+  author: {fontSize: 12, width: 30, flex: 12}
 });
 
 AppRegistry.registerComponent('AndroidWeekly', () => AndroidWeekly);
