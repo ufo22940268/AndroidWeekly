@@ -24,6 +24,18 @@ require('moment/locale/zh-cn');
 import WeeklyList from './widget/WeeklyList';
 import WeeklyDetail from './widget/WeeklyDetail';
 
+let _navigator;
+
+var RouteMapper = function (route, navigationOperations, onComponentRef) {
+  _navigator = navigationOperations;
+
+  if (route.name == 'detail') {
+    return <WeeklyDetailComponent></WeeklyDetailComponent>;
+  } else {
+    return <AndroidWeekly></AndroidWeekly>;
+  }
+};
+
 class AndroidWeekly extends Component {
 
   constructor(props) {
@@ -75,6 +87,7 @@ class AndroidWeekly extends Component {
 
   _onPress(des, title) {
     Linking.openURL(`example://gizmos?title=${encodeURIComponent(title)}&&des=${encodeURIComponent(des)}`);
+    _navigator.replace('detail')
   }
 
   render() {
@@ -114,10 +127,8 @@ class WeeklyDetailComponent extends Component {
   componentDidMount() {
     var url = Linking.getInitialURL().then(url => {
       if (url) {
-        console.log("url = " + url);
         const des = decodeURIComponent(url.match(/.+des=(.+)/)[1]);
         const title = decodeURIComponent(url.match(/.+title=([^&]+)/)[1]);
-        console.log("des = " + des);
         this.setState({description: des, title: title});
       }
     }).catch(err => console.error('An error occurred', err));
@@ -142,6 +153,21 @@ class WeeklyDetailComponent extends Component {
   }
 }
 
+class WeeklyApp extends Component {
+  render() {
+    return (
+      <Navigator
+        style={{ flex: 1, backgroundColor: 'white' }}
+        initialRoute={{'name': 'list', data: 'weoifjwoiefj'}}
+        configureScene={() => Navigator.SceneConfigs.FadeAndroid}
+        renderScene={RouteMapper}
+      >
+      </Navigator>
+    )
+  }
+}
 
-AppRegistry.registerComponent('AndroidWeekly', () => AndroidWeekly);
-AppRegistry.registerComponent('WeeklyDetail', () => WeeklyDetailComponent);
+
+//AppRegistry.registerComponent('AndroidWeekly', () => AndroidWeekly);
+//AppRegistry.registerComponent('WeeklyDetail', () => WeeklyDetailComponent);
+AppRegistry.registerComponent('AndroidWeekly', () => WeeklyApp);
