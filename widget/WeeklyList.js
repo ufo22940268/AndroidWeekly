@@ -25,7 +25,7 @@ const WeeklyList = React.createClass({
       <ListView
         dataSource={this.props.dataSource}
         renderRow={rowData=>
-        <TouchableHighlight onPress={this.props.onPress.bind(null, rowData.description)}>
+        <TouchableHighlight onPress={this.props.onPress.bind(null, rowData.description, rowData.title)}>
          <View style={styles.item}>
           <Text style={styles.title}>{rowData.title}</Text>
           <Text style={{marginTop: 8}}>{this._truncate(rowData.description)}</Text>

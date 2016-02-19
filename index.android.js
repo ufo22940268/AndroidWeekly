@@ -13,6 +13,9 @@ import React, {
   ListView,
   PullToRefreshViewAndroid,
   Linking,
+  StatusBar,
+  Navigator,
+  ToolbarAndroid,
 } from 'react-native';
 
 import moment from 'moment';
@@ -70,17 +73,40 @@ class AndroidWeekly extends Component {
   _onRefresh() {
   }
 
-  _onPress(des) {
-    Linking.openURL('example://gizmos?des=' + encodeURIComponent(des));
+  _onPress(des, title) {
+    Linking.openURL(`example://gizmos?title=${encodeURIComponent(title)}&&des=${encodeURIComponent(des)}`);
   }
 
   render() {
     return (
+      <View style={{flex: 1}}>
+        <StatusBar
+          backgroundColor="#009688"
+        />
+        <ToolbarAndroid
+          style={styles.toolbar}
+          title="AndroidWeekly"
+          navIcon={require('image!android_back_white')}
+        >
+        </ToolbarAndroid>
         <WeeklyList dataSource={this.state.dataSource} onPress={this._onPress}>
         </WeeklyList>
+      </View>
     );
   }
 }
+
+
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  toolbar: {
+    backgroundColor: '#009688',
+    height: 56,
+  },
+});
 
 
 class WeeklyDetailComponent extends Component {
@@ -88,17 +114,30 @@ class WeeklyDetailComponent extends Component {
   componentDidMount() {
     var url = Linking.getInitialURL().then(url => {
       if (url) {
+        console.log("url = " + url);
         const des = decodeURIComponent(url.match(/.+des=(.+)/)[1]);
+        const title = decodeURIComponent(url.match(/.+title=([^&]+)/)[1]);
         console.log("des = " + des);
-        this.setState({description: des});
+        this.setState({description: des, title: title});
       }
     }).catch(err => console.error('An error occurred', err));
   }
 
   render() {
     return (
-      <WebView source={{html: this.state && this.state.description}}>
-      </WebView>
+      <View style={{flex: 1}}>
+        <StatusBar
+          backgroundColor="#009688"
+        />
+        <ToolbarAndroid
+          style={styles.toolbar}
+          title={this.state && this.state.title}
+          navIcon={require('image!android_back_white')}
+        >
+        </ToolbarAndroid>
+        <WebView source={{html: this.state && this.state.description}}>
+        </WebView>
+      </View>
     )
   }
 }
