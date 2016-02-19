@@ -16,6 +16,7 @@ import React, {
 import moment from 'moment';
 import {DOMParser} from 'xmldom';
 require('moment/locale/zh-cn');
+import WeeklyList from './widget/WeeklyList';
 
 class AndroidWeekly extends Component {
 
@@ -62,65 +63,14 @@ class AndroidWeekly extends Component {
       }).then(items => this.updateList(items))
   }
 
-  _truncate(des) {
-    if (des) {
-      des = des.replace(/<.+?>/g, '').substring(0, 140).replace(/\s/g, '');
-      if (des) des = des + '...';
-      return des;
-    }
-    else
-      return '';
-  }
 
   render() {
     return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={rowData=>
-         <View style={styles.item}>
-          <Text style={styles.title}>{rowData.title}</Text>
-          <Text style={{marginTop: 8}}>{this._truncate(rowData.description)}</Text>
-          <View style={{flexDirection: 'row'}}>
-            <View style={styles.createContainer}>
-              <Text style={styles.create}>{rowData.create}</Text>
-            </View>
-          </View>
-        </View>
-        }
-      >
-      </ListView>
+      <WeeklyList dataSource={this.state.dataSource}>
+      </WeeklyList>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  item: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    backgroundColor: '#F5FCFF',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderColor: 'grey',
-    borderStyle: 'dashed',
-  },
-
-  title: {color: 'black', fontWeight: 'bold', fontSize: 14},
-  author: {fontSize: 12},
-  tag: {fontSize: 12, marginLeft: 5},
-  createContainer: {
-    marginTop: 4,
-    backgroundColor: '#FF5722',
-    overflow: 'hidden',
-    borderColor: '#FF5722',
-    borderRadius: 2,
-    borderWidth: 1,
-    paddingLeft: 4,
-    paddingRight: 4,
-  },
-  create: {
-    fontSize: 10,
-    color: '#fff',
-  }
-});
 
 AppRegistry.registerComponent('AndroidWeekly', () => AndroidWeekly);
