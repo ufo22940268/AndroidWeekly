@@ -10,7 +10,8 @@ import React, {
   Text,
   View,
   WebView,
-  ListView
+  ListView,
+  TouchableHighlight
 } from 'react-native';
 
 import moment from 'moment';
@@ -18,11 +19,13 @@ import {DOMParser} from 'xmldom';
 require('moment/locale/zh-cn');
 
 const WeeklyList = React.createClass({
+
   render() {
     return (
       <ListView
         dataSource={this.props.dataSource}
         renderRow={rowData=>
+        <TouchableHighlight onPress={this.props.onPress.bind(null, rowData.description)}>
          <View style={styles.item}>
           <Text style={styles.title}>{rowData.title}</Text>
           <Text style={{marginTop: 8}}>{this._truncate(rowData.description)}</Text>
@@ -32,6 +35,7 @@ const WeeklyList = React.createClass({
             </View>
           </View>
         </View>
+        </TouchableHighlight>
         }
       >
       </ListView>
