@@ -12,7 +12,10 @@ import React, {
   WebView,
   ListView
 } from 'react-native';
+
+import moment from 'moment';
 import {DOMParser} from 'xmldom';
+require('moment/locale/zh-cn');
 
 class AndroidWeekly extends Component {
 
@@ -40,6 +43,14 @@ class AndroidWeekly extends Component {
         title: item.getElementsByTagName('title')[0].textContent,
         description: item.getElementsByTagName('description')[0].textContent,
         author: item.getElementsByTagName('dc:creator')[0].textContent,
+        category: function () {
+          const category = item.getElementsByTagName('category')[0];
+          if (category)
+            return category.textContent;
+          else
+            return '';
+        }(),
+        create: moment(new Date(item.getElementsByTagName('pubDate')[0].textContent)).format('LL')
       };
     }
 
@@ -51,16 +62,28 @@ class AndroidWeekly extends Component {
       }).then(items => this.updateList(items))
   }
 
+  _truncate(des) {
+    if (des) {
+      des = des.replace(/<.+?>/g, '').substring(0, 140).replace(/\s/g, '');
+      if (des) des = des + '...';
+      return des;
+    }
+    else
+      return '';
+  }
+
   render() {
     return (
       <ListView
         dataSource={this.state.dataSource}
         renderRow={rowData=>
          <View style={styles.item}>
-          <Text>{rowData.title}</Text>
+          <Text style={styles.title}>{rowData.title}</Text>
+          <Text style={{marginTop: 8}}>{this._truncate(rowData.description)}</Text>
           <View style={{flexDirection: 'row'}}>
-            <Text style={styles.author}>{rowData.author}</Text>
-            <Text style={styles.author}>"wefijwoie"</Text>
+            <View style={styles.createContainer}>
+              <Text style={styles.create}>{rowData.create}</Text>
+            </View>
           </View>
         </View>
         }
@@ -72,16 +95,32 @@ class AndroidWeekly extends Component {
 
 const styles = StyleSheet.create({
   item: {
-    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     backgroundColor: '#F5FCFF',
     padding: 16,
     borderBottomWidth: 1,
     borderColor: 'grey',
-    borderStyle: 'dashed'
+    borderStyle: 'dashed',
   },
 
-  title: {color: 'black'},
-  author: {fontSize: 12, width: 30, flex: 12}
+  title: {color: 'black', fontWeight: 'bold', fontSize: 14},
+  author: {fontSize: 12},
+  tag: {fontSize: 12, marginLeft: 5},
+  createContainer: {
+    marginTop: 4,
+    backgroundColor: '#FF5722',
+    overflow: 'hidden',
+    borderColor: '#FF5722',
+    borderRadius: 2,
+    borderWidth: 1,
+    paddingLeft: 4,
+    paddingRight: 4,
+  },
+  create: {
+    fontSize: 10,
+    color: '#fff',
+  }
 });
 
 AppRegistry.registerComponent('AndroidWeekly', () => AndroidWeekly);
